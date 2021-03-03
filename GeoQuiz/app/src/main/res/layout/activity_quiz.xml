@@ -9,10 +9,12 @@
     tools:context=".QuizActivity">
 
     <TextView
+        android:id="@+id/tv_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="24dp"
-        android:text="Hello World!" />
+        android:textAlignment="center"
+        tools:text="question"/>
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,6 +32,27 @@
             android:layout_height="wrap_content"
             android:text="@string/bt_false"/>
 
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/bt_prev"
+            android:contentDescription="@string/bt_prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_left"
+            android:layout_marginRight="16dp"
+            android:padding="16dp"/>
+        <ImageButton
+            android:id="@+id/bt_next"
+            android:contentDescription="@string/bt_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_right"
+            android:padding="16dp"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
