@@ -1,8 +1,10 @@
 package hhc.br.geoquiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class QuizActivity extends AppCompatActivity {
+
+    private static final String TAG = "rat.QuizActivity";
+    private static final String KEY_INDEX = "index";
 
     private Button mBtTrue;
     private Button mBtFalse;
@@ -33,6 +38,10 @@ public class QuizActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
+
+        if(savedInstanceState != null){
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, -1);
+        }
 
         mBtTrue = findViewById(R.id.bt_true);
         mBtFalse = findViewById(R.id.bt_false);
@@ -72,6 +81,13 @@ public class QuizActivity extends AppCompatActivity {
                 updateQuestion();
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(TAG, "rat: onSaveInstanceState");
+        outState.putInt(KEY_INDEX, mCurrentIndex);
     }
 
     private void checkAnswer(boolean userPressedTrue){
