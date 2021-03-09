@@ -1,11 +1,12 @@
 package hhc.br.geoquiz;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -16,14 +17,12 @@ public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "rat.QuizActivity";
     private static final String KEY_INDEX = "index";
+    private static final int REQ_CODE_CHEAT = 0;
 
-    private Button mBtTrue;
-    private Button mBtFalse;
-    private ImageButton mBtNext;
-    private ImageButton mBtPrev;
     private TextView mTvQuestion;
+    private boolean mIsCheater;
 
-    private Question[] mQuestionBank = new Question[]{
+    private final Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
             new Question(R.string.question_mideast, false),
@@ -43,44 +42,27 @@ public class QuizActivity extends AppCompatActivity {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, -1);
         }
 
-        mBtTrue = findViewById(R.id.bt_true);
-        mBtFalse = findViewById(R.id.bt_false);
-        mBtNext = findViewById(R.id.bt_next);
-        mBtPrev = findViewById(R.id.bt_prev);
+        Button btCheat = findViewById(R.id.bt_cheat);
+        Button btTrue = findViewById(R.id.bt_true);
+        Button btFalse = findViewById(R.id.bt_false);
+        ImageButton btNext = findViewById(R.id.bt_next);
+        ImageButton btPrev = findViewById(R.id.bt_prev);
         mTvQuestion = findViewById(R.id.tv_question);
 
         updateQuestion();
 
-        mBtTrue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(true);
-            }
+        btCheat.setOnClickListener(v -> {
+            Intent intent = CheatActivity.newIntent(
+                    QuizActivity.this,
+                    mQuestionBank[mCurrentIndex].isAnswerTrue());
+                    //new Intent(QuizActivity.this, CheatActivity.class);
+            startActivityForResult(intent, REQ_CODE_CHEAT);
         });
-        mBtFalse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(false);
-            }
-        });
-        mBtNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateQuestion();
-            }
-        });
-        mBtPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                prevQuestion();
-            }
-        });
-        mTvQuestion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateQuestion();
-            }
-        });
+        btTrue.setOnClickListener(v -> checkAnswer(true));
+        btFalse.setOnClickListener(v -> checkAnswer(false));
+        btNext.setOnClickListener(v -> updateQuestion());
+        btPrev.setOnClickListener(v -> prevQuestion());
+        mTvQuestion.setOnClickListener(v -> updateQuestion());
     }
 
     @Override
@@ -88,6 +70,20 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "rat: onSaveInstanceState");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode != RESULT_OK){
+            return;
+        }
+        if(requestCode == REQ_CODE_CHEAT){
+            if(data == null){
+                return;
+            }
+            mIsCheater = CheatActivity.wasAnswerShown(data);
+        }
     }
 
     private void checkAnswer(boolean userPressedTrue){
