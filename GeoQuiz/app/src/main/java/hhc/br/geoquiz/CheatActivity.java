@@ -1,8 +1,13 @@
 package hhc.br.geoquiz;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -38,6 +43,22 @@ public class CheatActivity extends AppCompatActivity {
         showAnswerBt.setOnClickListener(v -> {
             answerTV.setText(answerIsTrue ? R.string.bt_true : R.string.bt_false);
             setAnswerShownResult(true);
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                int cx = showAnswerBt.getWidth() / 2;
+                int cy = showAnswerBt.getHeight() / 2;
+                float rad = showAnswerBt.getWidth();
+                Animator anim = ViewAnimationUtils
+                        .createCircularReveal(showAnswerBt, cx, cy, rad, 0);
+                anim.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        showAnswerBt.setVisibility(View.INVISIBLE);
+                    }
+                });
+                anim.start();
+            }
         });
     }
 
